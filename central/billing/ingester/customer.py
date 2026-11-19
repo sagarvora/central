@@ -293,9 +293,11 @@ def _address_payload(profile) -> dict:
 def _contact_payload(profile) -> dict:
 	owner = profile.team_owner or frappe.db.get_value("Team", profile.team, "owner_user")
 	names = (
-		frappe.db.get_value("User", owner, ["first_name", "last_name"], as_dict=True) if owner else None
+		frappe.db.get_value("User", owner, ["first_name", "last_name", "email"], as_dict=True)
+		if owner
+		else None
 	) or frappe._dict()
-	emails = [e for e in dict.fromkeys([owner, profile.email]) if e]
+	emails = [e for e in dict.fromkeys([names.email, profile.email]) if e]
 	return {
 		"first_name": names.first_name or profile.legal_name,
 		"last_name": names.last_name,

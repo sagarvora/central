@@ -19,6 +19,7 @@ adapter through the registry, keeping the gateway seam intact.
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils import get_email_address
 
 from central.billing.doctype.billing_event import billing_event
 from central.billing.payments import decline, setup_expiry, setup_lockout
@@ -45,7 +46,7 @@ def gateway_customer_info(team: str) -> "frappe._dict":
 	)
 	return frappe._dict(
 		name=p.legal_name or team,
-		owner_user=p.email or frappe.db.get_value("Team", team, "owner_user"),
+		owner_user=p.email or get_email_address(frappe.db.get_value("Team", team, "owner_user")),
 		phone=p.phone,
 	)
 
